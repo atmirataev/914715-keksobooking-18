@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Атмир Атаев](https://up.htmlacademy.ru/javascript/18/user/914715).
-* Наставник: `Неизвестно`.
+* Наставник: [Максим Лыков](https://htmlacademy.ru/profile/id529621).
 
 ---
 

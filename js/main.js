@@ -92,8 +92,8 @@ var showAdvertisements = function () {
 
   for (var i = 1; i <= COUNT_OF_ADS; i++) {
     fragment.appendChild(renderAdvertisement(i));
-    mapPinsList.appendChild(fragment);
   }
+  mapPinsList.appendChild(fragment);
 };
 
 showAdvertisements();

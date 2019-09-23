@@ -80,7 +80,7 @@ var createAdvertisement = function (index) {
 
 /**
  * @param {Number} index - Индекс из цикла, который находится в showAdvertisements()
- * @return {} - Объявление с данными
+ * @return {HTMLElement} - Объявление с данными
  */
 var renderAdvertisement = function (index) {
   var adElem = adTemplate.cloneNode(true);

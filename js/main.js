@@ -14,17 +14,17 @@ var map = document.querySelector('.map');
 map.classList.remove('map--faded');
 
 /**
- * @param {array} arr массив данных для генерации случайных данных
- * @return {string} случайный элемент массива
+ * @param {Array} arr - Массив данных для генерации случайных данных
+ * @return {Any} - Случайный элемент массива
  */
 var getRandomElem = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 };
 
 /**
- * @param {number} min от
- * @param {number} max до
- * @return {number} случайное число от min до max
+ * @param {Number} min - Минимальное число
+ * @param {Number} max - Максимальное число
+ * @return {Number} - Случайное число от min до max
  */
 var getRandomNumber = function (min, max) {
   var rand = min + Math.random() * (max + 1 - min);
@@ -32,7 +32,7 @@ var getRandomNumber = function (min, max) {
 };
 
 /**
- * @return {Array} массив случайной длины
+ * @return {Array} - Массив случайной длины
  */
 var getPhotos = function () {
   var photos = [];
@@ -44,8 +44,8 @@ var getPhotos = function () {
 };
 
 /**
- * @param {number} index сюда передается индекс из цикла, который находится в showAdvertisements()
- * @return {string} структура объявления без данных
+ * @param {Number} index - Индекс из цикла, который находится в showAdvertisements()
+ * @return {Object} - Структура объявления без данных
  */
 var createAdvertisement = function (index) {
   var locationX = getRandomNumber(MIN_X, MAX_X);
@@ -79,8 +79,8 @@ var createAdvertisement = function (index) {
 };
 
 /**
- * @param {number} index сюда передается индекс из цикла, который находится в showAdvertisements()
- * @return {string} объявление с данными
+ * @param {Number} index - Индекс из цикла, который находится в showAdvertisements()
+ * @return {} - Объявление с данными
  */
 var renderAdvertisement = function (index) {
   var adElem = adTemplate.cloneNode(true);
@@ -93,7 +93,7 @@ var renderAdvertisement = function (index) {
 };
 
 /**
- * @description показывает объявления на карте
+ * @description - Показывает объявления на карте
  */
 var showAdvertisements = function () {
   var mapPinsList = document.querySelector('.map__pins');

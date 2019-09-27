@@ -18,6 +18,7 @@ var fieldsetsInMapFilters = mapFilters.querySelectorAll('fieldset');
 var selectInMapFilters = mapFilters.querySelectorAll('.select');
 var mainMapPin = document.querySelector('.map__pin--main');
 var mapIsActive = false;
+var capacitySelect = adForm.querySelector('#capacity');
 
 /**
  * @param {Array} arr - Массив данных для генерации случайных данных
@@ -111,6 +112,9 @@ var showAdvertisements = function () {
   mapPinsList.appendChild(fragment);
 };
 
+/**
+ * @description - Отключает поля формы
+ */
 var disableForms = function () {
   for (var i = 0; i < adFormFieldsets.length; i++) {
     adFormFieldsets[i].setAttribute('disabled', 'disabled');
@@ -125,8 +129,11 @@ var disableForms = function () {
   }
 };
 
-disableForms();
+disableForms(); // Неактивные поля при старте загрузки страницы
 
+/**
+ * @description - Делает активными поля формы
+ */
 var doActiveForms = function () {
   for (var i = 0; i < adFormFieldsets.length; i++) {
     adFormFieldsets[i].removeAttribute('disabled');
@@ -141,13 +148,20 @@ var doActiveForms = function () {
   }
 };
 
+/**
+ * @description - Добавляет адрес пина в поле "адрес"
+ * @return {Any} - Адрес
+ */
 var getMapPinPosition = function () {
   var mapPinPosition = adForm.querySelector('input[name="address"]').value = parseInt(mainMapPin.style.left, 10) + ', ' + parseInt(mainMapPin.style.top, 10);
   return mapPinPosition;
 };
 
-getMapPinPosition();
+getMapPinPosition(); // Ввод адреса в соответствующее поле при старте загрузки страницы
 
+/**
+ * @description - Активирует карту и формы
+ */
 var openMap = function () {
   if (!mapIsActive) {
     map.classList.remove('map--faded');
@@ -168,3 +182,13 @@ mainMapPin.addEventListener('keydown', function (evt) {
 // Проблемы:
 // 1. Валидация. Пытался сделать через второй подход. Писал-писал код - закопался и удалил все.
 
+var checkIsCapacityMoreThanRooms = function () {
+  var selectedRoom = adForm.querySelector('#room_number').querySelector('option[selected]').value;
+  var selectedCapacity = capacitySelect.querySelector('option[selected]').value;
+
+  if (selectedRoom < selectedCapacity) {
+    return true;
+  }
+
+  return false;
+};

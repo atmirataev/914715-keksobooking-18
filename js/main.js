@@ -5,13 +5,18 @@ var MIN_X = 0;
 var MAX_X = 1200;
 var MIN_Y = 130;
 var MAX_Y = 630;
+var ENTER_KEYCODE = 13;
 var HOTEL_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var HOTEL_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var map = document.querySelector('.map');
-
-map.classList.remove('map--faded');
+var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var adForm = document.querySelector('.ad-form');
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
+var mapFilters = document.querySelector('.map__filters');
+var fieldsetsInMapFilters = mapFilters.querySelectorAll('fieldset');
+var selectInMapFilters = mapFilters.querySelectorAll('.select');
+var mainMapPin = document.querySelector('.map__pin--main');
 
 /**
  * @param {Array} arr - Массив данных для генерации случайных данных
@@ -105,4 +110,58 @@ var showAdvertisements = function () {
   mapPinsList.appendChild(fragment);
 };
 
-showAdvertisements();
+var disableForms = function () {
+  for (var i = 0; i < adFormFieldsets.length; i++) {
+    adFormFieldsets[i].setAttribute('disabled', 'disabled');
+  }
+
+  for (i = 0; i < fieldsetsInMapFilters.length; i++) {
+    fieldsetsInMapFilters[i].setAttribute('disabled', 'disabled');
+  }
+
+  for (i = 0; i < selectInMapFilters.length; i++) {
+    selectInMapFilters[i].setAttribute('disabled', 'disabled');
+  }
+};
+
+disableForms();
+
+var doActiveForms = function () {
+  for (var i = 0; i < adFormFieldsets.length; i++) {
+    adFormFieldsets[i].removeAttribute('disabled');
+  }
+
+  for (i = 0; i < fieldsetsInMapFilters.length; i++) {
+    fieldsetsInMapFilters[i].removeAttribute('disabled');
+  }
+
+  for (i = 0; i < selectInMapFilters.length; i++) {
+    selectInMapFilters[i].removeAttribute('disabled');
+  }
+};
+
+var getMapPinPosition = function () {
+  var mapPinPosition = adForm.querySelector('input[name="address"]').value = parseInt(mainMapPin.style.left, 10) + ', ' + parseInt(mainMapPin.style.top, 10);
+  return mapPinPosition;
+};
+
+getMapPinPosition();
+
+var openMap = function () {
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  showAdvertisements();
+  doActiveForms();
+};
+
+mainMapPin.addEventListener('mousedown', openMap);
+mainMapPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    openMap();
+  }
+});
+
+// Проблемы:
+// 1. При нажатии на пин каждый раз появляются 8 новых объявлений на карте - функция showAdvertisements().
+// 2. Валидация. Пытался сделать через второй подход. Писал-писал код - закопался и удалил все.
+

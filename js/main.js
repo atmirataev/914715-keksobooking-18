@@ -17,6 +17,7 @@ var mapFilters = document.querySelector('.map__filters');
 var fieldsetsInMapFilters = mapFilters.querySelectorAll('fieldset');
 var selectInMapFilters = mapFilters.querySelectorAll('.select');
 var mainMapPin = document.querySelector('.map__pin--main');
+var mapIsActive = false;
 
 /**
  * @param {Array} arr - Массив данных для генерации случайных данных
@@ -148,10 +149,13 @@ var getMapPinPosition = function () {
 getMapPinPosition();
 
 var openMap = function () {
-  map.classList.remove('map--faded');
-  adForm.classList.remove('ad-form--disabled');
-  showAdvertisements();
-  doActiveForms();
+  if (!mapIsActive) {
+    map.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+    showAdvertisements();
+    doActiveForms();
+    mapIsActive = true;
+  }
 };
 
 mainMapPin.addEventListener('mousedown', openMap);
@@ -162,6 +166,5 @@ mainMapPin.addEventListener('keydown', function (evt) {
 });
 
 // Проблемы:
-// 1. При нажатии на пин каждый раз появляются 8 новых объявлений на карте - функция showAdvertisements().
-// 2. Валидация. Пытался сделать через второй подход. Писал-писал код - закопался и удалил все.
+// 1. Валидация. Пытался сделать через второй подход. Писал-писал код - закопался и удалил все.
 

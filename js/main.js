@@ -192,3 +192,5 @@ var checkIsCapacityMoreThanRooms = function () {
 
   return false;
 };
+
+checkIsCapacityMoreThanRooms();

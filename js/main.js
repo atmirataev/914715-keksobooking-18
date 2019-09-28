@@ -1,6 +1,7 @@
 'use strict';
 
 var COUNT_OF_ADS = 8;
+var PIN_SIZE = 65;
 var MIN_X = 0;
 var MAX_X = 1200;
 var MIN_Y = 130;
@@ -101,7 +102,7 @@ var renderAdvertisement = function (index) {
 };
 
 /**
- * @description - Показывает объявления на карте
+ * Показывает объявления на карте
  */
 var showAdvertisements = function () {
   var mapPinsList = document.querySelector('.map__pins');
@@ -113,39 +114,77 @@ var showAdvertisements = function () {
   mapPinsList.appendChild(fragment);
 };
 
+/**
+ * Переключает поле в активное/неактивное состояние
+ * @param {Arry} elems - Массив, содержащий интерактивные поля (input, select, fieldset)
+ * @param {Boolean} isNotActive - Необходимый вид карты (активный/неактивный)
+ */
 var toggleEnableElems = function (elems, isNotActive) {
   for (var i = 0; i < elems.length; i++) {
     elems[i].disabled = isNotActive;
   }
 };
 
-toggleEnableElems(adFormFieldsets, true);
-toggleEnableElems(mapFiltersFieldsets, true);
-toggleEnableElems(mapFiltersSelects, true);
+/**
+ * Переключает карту в активное/неактивное состояние
+ * @param {Boolen} isNotActive - Необходимый вид карты (активный/неактивный)
+ */
+var setDefaultParams = function (isNotActive) {
+  toggleEnableElems(adFormFieldsets, isNotActive);
+  toggleEnableElems(mapFiltersFieldsets, isNotActive);
+  toggleEnableElems(mapFiltersSelects, isNotActive);
+};
+
+setDefaultParams(true);
 
 /**
- * @description - Добавляет адрес пина в поле "адрес"
+ * Добавляет адрес пина в поле "адрес" и делает это поля только для чтения
+ * @param {Boolean} isActive - Активна карта или неактивна
  * @return {Any} - Адрес
  */
-var getMapPinPosition = function () {
-  var mapPinPosition = adForm.querySelector('input[name="address"]').value = parseInt(mainMapPin.style.left, 10) + ', ' + parseInt(mainMapPin.style.top, 10);
+var setAddressInInput = function (isActive) {
+  var addressInput = adForm.querySelector('input[name="address"]');
+  var mapPinPosition = addressInput.value;
+
+  addressInput.readOnly = true;
+  addressInput.value = parseInt(mainMapPin.style.left, 10) + ', ' + parseInt(mainMapPin.style.top, 10);
+
+  if (isActive) {
+    addressInput.value = parseInt(mainMapPin.style.left, 10) + PIN_SIZE + ', ' + (parseInt(mainMapPin.style.top, 10) + PIN_SIZE);
+  }
   return mapPinPosition;
 };
 
-getMapPinPosition(); // Ввод адреса в соответствующее поле при старте загрузки страницы
+setAddressInInput(false);
 
 /**
- * @description - Активирует карту и формы
+ * Проводит валидацию поля выбора количества гостей с учетом выбранной комнаты
+ */
+var validateForm = function () {
+  capacitySelect.querySelectorAll('option').forEach(function (item) {
+    item.disabled = roomNumberSelect.value < item.value || item.value === '0';
+    if (roomNumberSelect.value === '100') {
+      item.disabled = item.value > 0;
+    }
+
+    if (item.value < roomNumberSelect.value) {
+      capacitySelect.setCustomValidity('Выберете номер с большим количеством комнат');
+    }
+  });
+};
+
+/**
+ * Активирует карту и формы
  */
 var openMap = function () {
   if (!mapIsActive) {
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     showAdvertisements();
-    toggleEnableElems(adFormFieldsets, false);
-    toggleEnableElems(mapFiltersFieldsets, false);
-    toggleEnableElems(mapFiltersSelects, false);
+    setDefaultParams(false);
+    validateForm();
     mapIsActive = true;
+    setAddressInInput(true);
   }
 };
 
@@ -156,9 +195,4 @@ mainMapPin.addEventListener('keydown', function (evt) {
   }
 });
 
-roomNumberSelect.addEventListener('change', function () {
-  capacitySelect.querySelectorAll('option').forEach(function (item) {
-    item.disabled = roomNumberSelect.value < item.value;
-  });
-});
-
+roomNumberSelect.addEventListener('change', validateForm);

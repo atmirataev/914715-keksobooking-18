@@ -14,11 +14,12 @@ var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin
 var adForm = document.querySelector('.ad-form');
 var adFormFieldsets = adForm.querySelectorAll('fieldset');
 var mapFilters = document.querySelector('.map__filters');
-var fieldsetsInMapFilters = mapFilters.querySelectorAll('fieldset');
-var selectInMapFilters = mapFilters.querySelectorAll('.select');
+var mapFiltersFieldsets = mapFilters.querySelectorAll('fieldset');
+var mapFiltersSelects = mapFilters.querySelectorAll('.select');
 var mainMapPin = document.querySelector('.map__pin--main');
 var mapIsActive = false;
 var capacitySelect = adForm.querySelector('#capacity');
+var roomNumberSelect = adForm.querySelector('#room_number');
 
 /**
  * @param {Array} arr - Массив данных для генерации случайных данных
@@ -112,41 +113,15 @@ var showAdvertisements = function () {
   mapPinsList.appendChild(fragment);
 };
 
-/**
- * @description - Отключает поля формы
- */
-var disableForms = function () {
-  for (var i = 0; i < adFormFieldsets.length; i++) {
-    adFormFieldsets[i].setAttribute('disabled', 'disabled');
-  }
-
-  for (i = 0; i < fieldsetsInMapFilters.length; i++) {
-    fieldsetsInMapFilters[i].setAttribute('disabled', 'disabled');
-  }
-
-  for (i = 0; i < selectInMapFilters.length; i++) {
-    selectInMapFilters[i].setAttribute('disabled', 'disabled');
+var toggleEnableElems = function (elems, isNotActive) {
+  for (var i = 0; i < elems.length; i++) {
+    elems[i].disabled = isNotActive;
   }
 };
 
-disableForms(); // Неактивные поля при старте загрузки страницы
-
-/**
- * @description - Делает активными поля формы
- */
-var doActiveForms = function () {
-  for (var i = 0; i < adFormFieldsets.length; i++) {
-    adFormFieldsets[i].removeAttribute('disabled');
-  }
-
-  for (i = 0; i < fieldsetsInMapFilters.length; i++) {
-    fieldsetsInMapFilters[i].removeAttribute('disabled');
-  }
-
-  for (i = 0; i < selectInMapFilters.length; i++) {
-    selectInMapFilters[i].removeAttribute('disabled');
-  }
-};
+toggleEnableElems(adFormFieldsets, true);
+toggleEnableElems(mapFiltersFieldsets, true);
+toggleEnableElems(mapFiltersSelects, true);
 
 /**
  * @description - Добавляет адрес пина в поле "адрес"
@@ -167,7 +142,9 @@ var openMap = function () {
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     showAdvertisements();
-    doActiveForms();
+    toggleEnableElems(adFormFieldsets, false);
+    toggleEnableElems(mapFiltersFieldsets, false);
+    toggleEnableElems(mapFiltersSelects, false);
     mapIsActive = true;
   }
 };
@@ -179,18 +156,9 @@ mainMapPin.addEventListener('keydown', function (evt) {
   }
 });
 
-// Проблемы:
-// 1. Валидация. Пытался сделать через второй подход. Писал-писал код - закопался и удалил все.
+roomNumberSelect.addEventListener('change', function () {
+  capacitySelect.querySelectorAll('option').forEach(function (item) {
+    item.disabled = roomNumberSelect.value < item.value;
+  });
+});
 
-var checkIsCapacityMoreThanRooms = function () {
-  var selectedRoom = adForm.querySelector('#room_number').querySelector('option[selected]').value;
-  var selectedCapacity = capacitySelect.querySelector('option[selected]').value;
-
-  if (selectedRoom < selectedCapacity) {
-    return true;
-  }
-
-  return false;
-};
-
-checkIsCapacityMoreThanRooms();

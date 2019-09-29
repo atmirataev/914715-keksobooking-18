@@ -119,23 +119,16 @@ var showAdvertisements = function () {
  * @param {Arry} elems - Массив, содержащий интерактивные поля (input, select, fieldset)
  * @param {Boolean} isNotActive - Необходимый вид карты (активный/неактивный)
  */
-var toggleEnableElems = function (elems, isNotActive) {
+var toggleEnableForms = function (elems, isNotActive) {
   for (var i = 0; i < elems.length; i++) {
     elems[i].disabled = isNotActive;
   }
 };
 
-/**
- * Переключает карту в активное/неактивное состояние
- * @param {Boolen} isNotActive - Необходимый вид карты (активный/неактивный)
- */
-var setDefaultParams = function (isNotActive) {
-  toggleEnableElems(adFormFieldsets, isNotActive);
-  toggleEnableElems(mapFiltersFieldsets, isNotActive);
-  toggleEnableElems(mapFiltersSelects, isNotActive);
-};
-
-setDefaultParams(true);
+// Переключает карту в активное состояние
+[adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
+  toggleEnableForms(item, true);
+});
 
 /**
  * Добавляет адрес пина в поле "адрес" и делает это поля только для чтения
@@ -146,11 +139,10 @@ var setAddressInInput = function (isActive) {
   var addressInput = adForm.querySelector('input[name="address"]');
   var mapPinPosition = addressInput.value;
 
-  addressInput.readOnly = true;
-  addressInput.value = parseInt(mainMapPin.style.left, 10) + ', ' + parseInt(mainMapPin.style.top, 10);
+  addressInput.value = Math.round(parseInt(mainMapPin.style.left, 10) + PIN_SIZE / 2) + ', ' + Math.round((parseInt(mainMapPin.style.top, 10) + PIN_SIZE / 2));
 
   if (isActive) {
-    addressInput.value = parseInt(mainMapPin.style.left, 10) + PIN_SIZE + ', ' + (parseInt(mainMapPin.style.top, 10) + PIN_SIZE);
+    addressInput.value = Math.round(parseInt(mainMapPin.style.left, 10) + PIN_SIZE / 2) + ', ' + Math.round((parseInt(mainMapPin.style.top, 10) + PIN_SIZE * 2));
   }
   return mapPinPosition;
 };
@@ -167,8 +159,12 @@ var validateForm = function () {
       item.disabled = item.value > 0;
     }
 
-    if (item.value < roomNumberSelect.value) {
-      capacitySelect.setCustomValidity('Выберете номер с большим количеством комнат');
+    if (!item.disabled) {
+      item.selected = true;
+    }
+
+    if (item.selected > roomNumberSelect.value) {
+      capacitySelect.setCustomValidity('Выберете доступный вариант');
     }
   });
 };
@@ -181,7 +177,9 @@ var openMap = function () {
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     showAdvertisements();
-    setDefaultParams(false);
+    [adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
+      toggleEnableForms(item, false);
+    });
     validateForm();
     mapIsActive = true;
     setAddressInInput(true);

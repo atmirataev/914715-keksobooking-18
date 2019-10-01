@@ -1,12 +1,12 @@
 'use strict';
 
 (function () {
-  var X = {
+  var MAP_X_COORD = {
     min: 0,
     max: 1200,
   };
 
-  var Y = {
+  var MAP_Y_COORD = {
     min: 130,
     max: 630,
   };
@@ -17,22 +17,11 @@
   var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
   /**
-   * @param {Number} min - Минимальное число
-   * @param {Number} max - Максимальное число
-   * @return {Number} - Случайное число от min до max
-   */
-  var getRandomNumber = function (min, max) {
-    var rand = min + Math.random() * (max + 1 - min);
-
-    return Math.floor(rand);
-  };
-
-  /**
    * @return {Array} - Массив случайной длины
    */
   var getPhotos = function () {
     var photos = [];
-    var photosCount = getRandomNumber(1, 3);
+    var photosCount = window.util.getRandomNumber(1, 3);
 
     for (var i = 1; i <= photosCount; i++) {
       photos.push('http://o0.github.io/assets/images/tokyo/hotel' + i + '.jpg');
@@ -45,9 +34,9 @@
    * @param {Number} index - Индекс из цикла, который находится в showAdvertisements()
    * @return {Object} - Структура объявления без данных
    */
-  var createAdvertisement = function (index) {
-    var locationX = getRandomNumber(X.min, X.max);
-    var locationY = getRandomNumber(Y.min, Y.max);
+  function createAdvertisement(index) {
+    var locationX = window.util.getRandomNumber(MAP_X_COORD.min, MAP_X_COORD.max);
+    var locationY = window.util.getRandomNumber(MAP_Y_COORD.min, MAP_Y_COORD.max);
     var advertisement = {
       author: {
         avatar: 'img/avatars/user0' + index + '.png',
@@ -74,21 +63,24 @@
     };
 
     return advertisement;
+  }
+
+  /**
+   * @param {Number} index - Индекс из цикла, который находится в showAdvertisements()
+   * @return {HTMLElement} - Объявление с данными
+   */
+  var renderAdvertisement = function (index) {
+    var adElem = adTemplate.cloneNode(true);
+    var adData = createAdvertisement();
+    adElem.style.left = adData.location.x + 'px';
+    adElem.style.top = adData.location.y + 'px';
+    adElem.querySelector('img').src = createAdvertisement(index).author.avatar;
+    adElem.querySelector('img').alt = adData.offer.title;
+
+    return adElem;
   };
 
   window.data = {
-    /**
-     * @param {Number} index - Индекс из цикла, который находится в showAdvertisements()
-     * @return {HTMLElement} - Объявление с данными
-     */
-    renderAdvertisement: function (index) {
-      var adElem = adTemplate.cloneNode(true);
-      adElem.style.left = createAdvertisement().location.x + 'px';
-      adElem.style.top = createAdvertisement().location.y + 'px';
-      adElem.querySelector('img').src = createAdvertisement(index).author.avatar;
-      adElem.querySelector('img').alt = createAdvertisement().offer.title;
-
-      return adElem;
-    },
+    renderAdvertisement: renderAdvertisement,
   };
 })();

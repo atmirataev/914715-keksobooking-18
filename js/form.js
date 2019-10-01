@@ -12,44 +12,49 @@
   /**
    * Переключает поле в активное/неактивное состояние
    * @param {Arry} elems - Массив, содержащий интерактивные поля (input, select, fieldset)
-   * @param {Boolean} isNotActive - Необходимый вид карты (активный/неактивный)
+   * @param {Boolean} mapIsActive - Необходимый вид карты (активный/неактивный)
    */
-  var toggleEnableFormElems = function (elems, isNotActive) {
+  var toggleEnableFormElems = function (elems, mapIsActive) {
     for (var i = 0; i < elems.length; i++) {
-      elems[i].disabled = isNotActive;
+      elems[i].disabled = mapIsActive;
     }
   };
 
-  window.form = {
-    adForm: adForm,
-
-    // Переключает форму в активное/неактивное состояние
-    toggleEnableForms: function () {
-      [adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
-        toggleEnableFormElems(item, true);
-      });
-    },
-
-    /**
-     * Проводит валидацию поля выбора количества гостей с учетом выбранной комнаты
-     */
-    validateForm: function () {
-      capacitySelect.querySelectorAll('option').forEach(function (item) {
-        item.disabled = roomNumberSelect.value < item.value || item.value === '0';
-        if (roomNumberSelect.value === '100') {
-          item.disabled = item.value > 0;
-        }
-
-        if (!item.disabled) {
-          item.selected = true;
-        }
-
-        if (item.selected > roomNumberSelect.value) {
-          capacitySelect.setCustomValidity('Выберете доступный вариант');
-        }
-      });
-    },
+  // Переключает форму в активное/неактивное состояние
+  var toggleEnableForms = function () {
+    [adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
+      toggleEnableFormElems(item, window.map.isActive);
+    });
   };
 
-  roomNumberSelect.addEventListener('change', window.form.validateForm);
+  toggleEnableForms(window.map.isActive);
+
+  /**
+   * Проводит валидацию поля выбора количества гостей с учетом выбранной комнаты
+   */
+  var validateForm = function () {
+    capacitySelect.querySelectorAll('option').forEach(function (item) {
+      item.disabled = roomNumberSelect.value < item.value || item.value === '0';
+      if (roomNumberSelect.value === '100') {
+        item.disabled = item.value > 0;
+      }
+
+      if (!item.disabled) {
+        item.selected = true;
+      }
+
+      if (item.selected > roomNumberSelect.value) {
+        capacitySelect.setCustomValidity('Выберете доступный вариант');
+      }
+    });
+  };
+
+  roomNumberSelect.addEventListener('change', validateForm);
+
+  window.form = {
+    adForm: adForm,
+    toggleEnableForms: toggleEnableForms,
+    validateForm: validateForm,
+  };
+
 })();

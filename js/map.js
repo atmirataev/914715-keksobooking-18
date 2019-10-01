@@ -18,20 +18,23 @@
     mapPinsList.appendChild(fragment);
   };
 
+  /**
+   * Активирует карту и формы
+   */
+  var openMap = function () {
+    if (!mapIsActive) {
+      map.classList.remove('map--faded');
+      window.form.adForm.classList.remove('ad-form--disabled');
+      showAdvertisements();
+      window.form.toggleEnableForms();
+      window.form.validateForm();
+      mapIsActive = true;
+      window.mainPin.setAddressInInput(true);
+    }
+  };
+
   window.map = {
-    /**
-     * Активирует карту и формы
-     */
-    openMap: function () {
-      if (!mapIsActive) {
-        map.classList.remove('map--faded');
-        window.form.adForm.classList.remove('ad-form--disabled');
-        showAdvertisements();
-        window.form.toggleEnableForms();
-        window.form.validateForm();
-        mapIsActive = true;
-        window.pin.setAddressInInput(true);
-      }
-    },
+    isActive: mapIsActive,
+    open: openMap,
   };
 })();

@@ -71,10 +71,10 @@
    */
   var renderAdvertisement = function (index) {
     var adElem = adTemplate.cloneNode(true);
-    var adData = createAdvertisement();
+    var adData = createAdvertisement(index);
     adElem.style.left = adData.location.x + 'px';
     adElem.style.top = adData.location.y + 'px';
-    adElem.querySelector('img').src = createAdvertisement(index).author.avatar;
+    adElem.querySelector('img').src = adData.author.avatar;
     adElem.querySelector('img').alt = adData.offer.title;
 
     return adElem;

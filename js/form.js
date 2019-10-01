@@ -21,13 +21,13 @@
   };
 
   // Переключает форму в активное/неактивное состояние
-  var toggleEnableForms = function () {
+  var toggleEnableForms = function (mapIsActive) {
     [adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
-      toggleEnableFormElems(item, window.map.isActive);
+      toggleEnableFormElems(item, !mapIsActive);
     });
   };
 
-  toggleEnableForms(window.map.isActive);
+  toggleEnableForms();
 
   /**
    * Проводит валидацию поля выбора количества гостей с учетом выбранной комнаты

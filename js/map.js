@@ -26,9 +26,9 @@
       map.classList.remove('map--faded');
       window.form.adForm.classList.remove('ad-form--disabled');
       showAdvertisements();
-      window.form.toggleEnableForms();
-      window.form.validateForm();
       mapIsActive = true;
+      window.form.toggleEnableForms(mapIsActive);
+      window.form.validateForm();
       window.mainPin.setAddressInInput(true);
     }
   };

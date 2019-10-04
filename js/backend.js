@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var URL = 'https://js.dump.academy/keksobooking/da';
+  var URL = 'https://js.dump.academy/keksobooking/data';
 
   /**
    *Функия, получающая данные с сервера

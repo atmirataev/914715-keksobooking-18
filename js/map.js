@@ -30,12 +30,16 @@
     var errorBlock = errorTemplate.querySelector('.error');
     var siteMain = document.querySelector('main');
     var errorMessageCloseBtn = errorBlock.querySelector('.error__button');
+    var reloadData = function () {
+      siteMain.removeChild(errorBlock);
+      window.backend.load(succesGettingHandler, errorHandler);
+    };
 
     errorBlock.querySelector('.error__message').textContent = errorMessage;
     siteMain.appendChild(errorBlock);
 
-    errorMessageCloseBtn.addEventListener('click', function () {
-      window.backend.load(succesGettingHandler, errorHandler);
+    errorMessageCloseBtn.addEventListener('click', reloadData, {
+      once: true
     });
   };
 

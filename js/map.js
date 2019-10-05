@@ -30,15 +30,24 @@
     var errorBlock = errorTemplate.querySelector('.error');
     var siteMain = document.querySelector('main');
     var errorMessageCloseBtn = errorBlock.querySelector('.error__button');
-    var reloadData = function () {
+    var closeErrorPopup = function () {
       siteMain.removeChild(errorBlock);
-      window.backend.load(succesGettingHandler, errorHandler);
     };
 
     errorBlock.querySelector('.error__message').textContent = errorMessage;
     siteMain.appendChild(errorBlock);
 
-    errorMessageCloseBtn.addEventListener('click', reloadData, {
+    errorMessageCloseBtn.addEventListener('click', closeErrorPopup, {
+      once: true
+    });
+
+    document.addEventListener('click', closeErrorPopup, {
+      once: true
+    });
+
+    document.addEventListener('keydown', function (evt) {
+      window.util.isEscEvent(evt, closeErrorPopup);
+    }, {
       once: true
     });
   };

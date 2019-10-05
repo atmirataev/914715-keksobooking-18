@@ -2,9 +2,16 @@
 
 (function () {
   var ENTER_KEYCODE = 13;
+  var ESC_KEYCODE = 27;
 
   var isEnterEvent = function (evt, func) {
     if (evt.keyCode === ENTER_KEYCODE) {
+      func();
+    }
+  };
+
+  var isEscEvent = function (evt, func) {
+    if (evt.keyCode === ESC_KEYCODE) {
       func();
     }
   };
@@ -30,6 +37,7 @@
 
   window.util = {
     isEnterEvent: isEnterEvent,
+    isEscEvent: isEscEvent,
     getRandomElem: getRandomElem,
     getRandomNumber: getRandomNumber,
   };

@@ -20,6 +20,7 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < ads.length; i++) {
+      window.card.render(ads[i]);
       fragment.appendChild(renderAdvertisement(ads[i]));
     }
     mapPinsList.appendChild(fragment);

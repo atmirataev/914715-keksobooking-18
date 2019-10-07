@@ -4,13 +4,13 @@
   var map = document.querySelector('.map');
   var mapIsActive = false;
 
-  var renderAdvertisement = function (ad) {
+  var renderAdvertisement = function (advertisement) {
     var adElem = document.querySelector('#pin').content.querySelector('.map__pin').cloneNode(true);
 
-    adElem.style.left = ad.location.x + 'px';
-    adElem.style.top = ad.location.y + 'px';
-    adElem.querySelector('img').src = ad.author.avatar;
-    adElem.querySelector('img').alt = ad.offer.title;
+    adElem.style.left = advertisement.location.x + 'px';
+    adElem.style.top = advertisement.location.y + 'px';
+    adElem.querySelector('img').src = advertisement.author.avatar;
+    adElem.querySelector('img').alt = advertisement.offer.title;
 
     return adElem;
   };

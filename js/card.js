@@ -1,11 +1,13 @@
 'use strict';
 
 (function () {
-  var mapFiltersContainer = document.querySelector('.map__filters-container');
-  var fragment = document.createDocumentFragment();
-
+  /**
+   * @param {Object} ad - Объявление с данными
+   * @return {HTMLElement} - Карточка объявления
+   */
   var renderCard = function (ad) {
-    var cardElem = document.querySelector('#card').content.querySelector('.map__card').cloneNode(true);
+    var cardTemplate = document.querySelector('#card').content.cloneNode(true);
+    var cardElem = cardTemplate.querySelector('.map__card');
     var popupTitle = cardElem.querySelector('.popup__title');
     var popupAddress = cardElem.querySelector('.popup__text--address');
     var popupPrice = cardElem.querySelector('.popup__text--price');
@@ -17,26 +19,22 @@
     var popupPhotos = cardElem.querySelector('.popup__photos');
     var popupAvatar = cardElem.querySelector('.popup__avatar');
 
-    var getPopupType = function (houseType) {
-      switch (houseType) {
-        case 'flat':
-          return 'Квартира';
-        case 'bungalo':
-          return 'Бунгало';
-        case 'house':
-          return 'Дом';
-        case 'palace':
-          return 'Дворец';
-      }
+    var getPopupType = function (type) {
+      var houseTypes = {
+        flat: 'Квартира',
+        bungalo: 'Бунгало',
+        house: 'Дом',
+        palace: 'Дворец',
+      };
 
-      return houseType;
+      return houseTypes[type];
     };
 
     popupTitle.textContent = ad.offer.title;
     popupAddress.textContent = ad.offer.address;
     popupPrice.textContent = ad.offer.price + '₽/ночь';
     popupType.textContent = getPopupType(ad.offer.type);
-    popupCapacity.textContent = ad.offer.rooms + ' команаты, для ' + ad.offer.guests + ' гостей';
+    popupCapacity.textContent = ad.offer.rooms + ' комнаты, для ' + ad.offer.guests + ' гостей';
     popupTime.textContent = 'Заезд после ' + ad.offer.checkin + ' , выезд до ' + ad.offer.checkout;
     popupFeatures.textContent = ad.offer.features.join(', ');
     popupDescription.textContent = ad.offer.description;
@@ -50,13 +48,20 @@
       }
     });
 
-    fragment.appendChild(cardElem);
-
+    return cardElem;
   };
 
-  mapFiltersContainer.insertAdjacentHTML('beforeBegin', fragment);
+  /**
+   * Получает каждый элемент массива с объектами, полученными из сервера, вызывает функцию генерации карточки объявления и отобржает на карте
+   * @param {Object} ad - Объявление с данными
+   */
+  var putCardsInMap = function (ad) {
+    var mapFiltersContainer = document.querySelector('.map__filters-container');
+
+    mapFiltersContainer.insertAdjacentElement('beforeBegin', renderCard(ad));
+  };
 
   window.card = {
-    render: renderCard,
+    putCardsInMap: putCardsInMap,
   };
 })();

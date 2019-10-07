@@ -21,8 +21,23 @@
 
     for (var i = 0; i < ads.length; i++) {
       fragment.appendChild(renderAdvertisement(ads[i]));
+      window.card.putCardsInMap(ads[i]);
     }
     mapPinsList.appendChild(fragment);
+
+    /**
+     * Скрывает все объявления кроме одной. Временное решение. Чтобы карточки не нагромождались одна на другую
+     */
+    var hideCardsExcepThLast = function () {
+      var cards = document.querySelectorAll('.map__card');
+      cards.forEach(function (item) {
+        item.style.display = 'none';
+      });
+      var card = document.querySelector('.map__card');
+      card.style.display = 'block';
+    };
+
+    hideCardsExcepThLast();
   };
 
   var errorHandler = function (errorMessage) {

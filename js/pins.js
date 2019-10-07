@@ -33,5 +33,4 @@
   window.mainPin = {
     setAddressInInput: setAddressInInput,
   };
-
 })();

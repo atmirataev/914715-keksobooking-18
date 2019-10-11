@@ -69,7 +69,7 @@
 
     cardCloseBtn.addEventListener('click', closeCardPopup);
 
-    cardCloseBtn.addEventListener('keydown', function (evt) {
+    document.addEventListener('keydown', function (evt) {
       window.util.isEscEvent(evt, closeCardPopup);
     });
   };

@@ -6,14 +6,14 @@
    * @return {String} - Русский перевод
    */
   var getPopupType = function (type) {
-    var HouseTypes = {
+    var HouseType = {
       FLAT: 'Квартира',
       BUNGALO: 'Бунгало',
       HOUSE: 'Дом',
-      PACALE: 'Дворец',
+      PALACE: 'Дворец',
     };
 
-    return HouseTypes[type];
+    return HouseType[type];
   };
 
   /**
@@ -57,27 +57,33 @@
   };
 
   /**
-   * Скрывает все объявления.
+   * Получает данные пина, передает их в функцию создания карточки объявления, а также показывает и удаляет карточку объявления
+   * @param {Object} advertisementData - Данные объявления
    */
-  var hideCardsExcepThLast = function () {
-    var cards = document.querySelectorAll('.map__card');
-    cards.forEach(function (item) {
-      item.style.display = 'none';
+  var putCardInMap = function (advertisementData) {
+    var mapFiltersContainer = document.querySelector('.map__filters-container');
+    var currentCard = renderCard(advertisementData);
+    var cardCloseBtn = currentCard.querySelector('.popup__close');
+
+    mapFiltersContainer.insertAdjacentElement('beforeBegin', currentCard);
+
+    cardCloseBtn.addEventListener('click', closeCardPopup);
+
+    cardCloseBtn.addEventListener('keydown', function (evt) {
+      window.util.isEscEvent(evt, closeCardPopup);
     });
   };
 
-  /**
-   * Получает каждый элемент массива с объектами, полученными из сервера, вызывает функцию генерации карточки объявления и отобржает на карте
-   * @param {Object} advertisement - Объявление с данными
-   */
-  var putCardsInMap = function (advertisement) {
-    var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var closeCardPopup = function () {
+    var map = document.querySelector('.map');
+    var adCard = document.querySelector('.map__card');
 
-    mapFiltersContainer.insertAdjacentElement('beforeBegin', renderCard(advertisement));
-    hideCardsExcepThLast();
+    map.removeChild(adCard);
+    document.removeEventListener('click', closeCardPopup);
   };
 
   window.card = {
-    putCardsInMap: putCardsInMap,
+    putCardInMap: putCardInMap,
+    closePopup: closeCardPopup,
   };
 })();

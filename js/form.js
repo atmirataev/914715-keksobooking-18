@@ -8,6 +8,7 @@
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
   var capacitySelect = adForm.querySelector('#capacity');
   var roomNumberSelect = adForm.querySelector('#room_number');
+  var houseType = adForm.querySelector('#type');
 
   /**
    * Переключает поле в активное/неактивное состояние
@@ -47,6 +48,46 @@
         capacitySelect.setCustomValidity('Выберете доступный вариант');
       }
     });
+
+    var setMinPriceForCurrentType = function (type) {
+      var minPriceForCurrentType = {
+        FLAT: 1000,
+        BUNGALO: 0,
+        HOUSE: 5000,
+        PALACE: 10000,
+      };
+
+      return minPriceForCurrentType[type];
+    };
+
+    (function () {
+      var timeIn = adForm.querySelector('#timein');
+      var timeOut = adForm.querySelector('#timeout');
+
+      timeIn.addEventListener('blur', function () {
+        var timeInValue = timeIn.options[timeIn.selectedIndex].value;
+        timeOut.querySelectorAll('option').forEach(function (item) {
+          item.disabled = true;
+          if (timeInValue === item.value) {
+            item.selected = true;
+            item.disabled = false;
+          }
+        });
+      });
+    })();
+
+    var validatePriceInput = function () {
+      var priceInput = adForm.querySelector('#price');
+      var currentType = houseType.options[houseType.selectedIndex].value.toUpperCase();
+      var minPriceForCurrentType = setMinPriceForCurrentType(currentType);
+
+      priceInput.setAttribute('min', minPriceForCurrentType);
+      priceInput.placeholder = minPriceForCurrentType;
+    };
+
+    validatePriceInput();
+
+    houseType.addEventListener('blur', validatePriceInput);
   };
 
   roomNumberSelect.addEventListener('change', validateForm);
@@ -56,5 +97,4 @@
     toggleEnableForms: toggleEnableForms,
     validateForm: validateForm,
   };
-
 })();

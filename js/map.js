@@ -15,30 +15,20 @@
     return adElem;
   };
 
-  var succesGettingHandler = function (ads) {
+  var succesGettingHandler = function (advertisements) {
     var mapPinsList = document.querySelector('.map__pins');
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < ads.length; i++) {
-      fragment.appendChild(renderAdvertisement(ads[i]));
-      window.card.putCardsInMap(ads[i]);
+    for (var i = 0; i < advertisements.length; i++) {
+      var advertisementPin = renderAdvertisement(advertisements[i]);
+      fragment.appendChild(advertisementPin);
+      window.pins.setAdverstismentData(advertisements[i], advertisementPin);
     }
+
     mapPinsList.appendChild(fragment);
-
-    /**
-     * Скрывает все объявления кроме одной. Временное решение. Чтобы карточки не нагромождались одна на другую
-     */
-    var hideCardsExcepThLast = function () {
-      var cards = document.querySelectorAll('.map__card');
-      cards.forEach(function (item) {
-        item.style.display = 'none';
-      });
-      var card = document.querySelector('.map__card');
-      card.style.display = 'block';
-    };
-
-    hideCardsExcepThLast();
+    window.pins.onMapPinClick();
   };
+
 
   var errorHandler = function (errorMessage) {
     var errorTemplate = document.querySelector('#error').content.cloneNode(true);
@@ -78,7 +68,7 @@
       mapIsActive = true;
       window.form.toggleEnableForms(mapIsActive);
       window.form.validateForm();
-      window.mainPin.setAddressInInput(true);
+      window.pins.setAddressInInput(true);
     }
   };
 

@@ -28,9 +28,37 @@
     return mapPinPosition;
   };
 
+  var setAdverstismentData = function (advertisementData, advertisementPin) {
+    advertisementPin.setAttribute('data-params', JSON.stringify(advertisementData));
+  };
+
+  var parseAdvertisementData = function (advertisementPin) {
+    var params = advertisementPin.getAttribute('data-params');
+    return JSON.parse(params);
+  };
+
+  var onMapPinClick = function () {
+    var mapPins = document.querySelectorAll('.map__pin');
+
+    mapPins.forEach(function (item) {
+      item.addEventListener('click', function () {
+        var advertisementData = parseAdvertisementData(item);
+        var isCardOnSite = document.querySelector('.map__card');
+
+        if (isCardOnSite) {
+          window.card.closePopup();
+        }
+
+        window.card.putCardInMap(advertisementData);
+      });
+    });
+  };
+
   setAddressInInput(false);
 
-  window.mainPin = {
+  window.pins = {
     setAddressInInput: setAddressInInput,
+    setAdverstismentData: setAdverstismentData,
+    onMapPinClick: onMapPinClick,
   };
 })();

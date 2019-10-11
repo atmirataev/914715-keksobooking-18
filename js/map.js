@@ -31,7 +31,7 @@
     }
 
     mapPinsList.appendChild(fragment);
-    window.pins.onMapPinClick();
+    window.card.openPopup();
   };
 
   /**
@@ -79,11 +79,10 @@
     if (!mapIsActive) {
       window.backend.load(succesGettingHandler, errorHandler);
       map.classList.remove('map--faded');
-      window.form.adForm.classList.remove('ad-form--disabled');
       mapIsActive = true;
       window.form.toggleEnableForms(mapIsActive);
       window.form.validateForm();
-      window.pins.setAddressInInput(true);
+      window.form.setAddressInInput(mapIsActive);
     }
   };
 

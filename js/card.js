@@ -68,10 +68,16 @@
     mapFiltersContainer.insertAdjacentElement('beforeBegin', currentCard);
 
     cardCloseBtn.addEventListener('click', closeCardPopup);
+    document.addEventListener('keydown', onPopupEscPress);
 
-    document.addEventListener('keydown', function (evt) {
-      window.util.isEscEvent(evt, closeCardPopup);
-    });
+  };
+
+  /**
+   * Закрывает попап по нажатию Esc
+   * @param {Event} evt - Объект event
+   */
+  var onPopupEscPress = function (evt) {
+    window.util.isEscEvent(evt, closeCardPopup);
   };
 
   /**
@@ -80,13 +86,39 @@
   var closeCardPopup = function () {
     var map = document.querySelector('.map');
     var adCard = document.querySelector('.map__card');
+    var cardCloseBtn = document.querySelector('.popup__close');
 
     map.removeChild(adCard);
-    document.removeEventListener('click', closeCardPopup);
+    cardCloseBtn.removeEventListener('click', closeCardPopup);
+    document.removeEventListener('keydown', onPopupEscPress);
+  };
+
+  /**
+   * При клике на пин открывает окно с карточкой объявления
+   */
+  var openCardPopup = function () {
+    var mapPins = document.querySelector('.map__pins');
+
+    mapPins.addEventListener('click', function (evt) {
+      var mapPin = evt.target.closest('.map__pin:not(.map__pin--main)');
+      var isCardOnSite = document.querySelector('.map__card');
+
+      if (!mapPin) {
+        return;
+      }
+
+      var advertisementData = window.pins.parseAdvertisementData(mapPin);
+
+      if (isCardOnSite) {
+        window.card.closePopup();
+      }
+      putCardInMap(advertisementData);
+    });
   };
 
   window.card = {
     putCardInMap: putCardInMap,
     closePopup: closeCardPopup,
+    openPopup: openCardPopup,
   };
 })();

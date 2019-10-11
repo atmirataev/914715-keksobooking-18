@@ -14,6 +14,15 @@
     }
   };
 
+  /**
+   * Добавляет адрес пина в поле "адрес" и делает это поля только для чтения
+   * @param {Boolean} mapIsActive - Активна карта или нет
+   */
+  var setAddressInInput = function (mapIsActive) {
+    var addressInput = adForm.querySelector('input[name="address"]');
+    addressInput.value = window.pins.getAdrress(mapIsActive);
+  };
+
   // Переключает форму в активное/неактивное состояние
   var toggleEnableForms = function (mapIsActive) {
     var mapFilters = document.querySelector('.map__filters');
@@ -21,9 +30,14 @@
     var mapFiltersSelects = mapFilters.querySelectorAll('.select');
     var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
+    if (mapIsActive) {
+      adForm.classList.remove('ad-form--disabled');
+    }
+
     [adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
       toggleEnableFormElems(item, !mapIsActive);
     });
+
   };
 
   toggleEnableForms();
@@ -75,10 +89,17 @@
       timeIn.addEventListener('blur', function () {
         var timeInValue = timeIn.options[timeIn.selectedIndex].value;
         timeOut.querySelectorAll('option').forEach(function (item) {
-          item.disabled = true;
           if (timeInValue === item.value) {
             item.selected = true;
-            item.disabled = false;
+          }
+        });
+      });
+
+      timeOut.addEventListener('blur', function () {
+        var timeOutValue = timeOut.options[timeOut.selectedIndex].value;
+        timeIn.querySelectorAll('option').forEach(function (item) {
+          if (timeOutValue === item.value) {
+            item.selected = true;
           }
         });
       });
@@ -104,9 +125,13 @@
     roomNumberSelect.addEventListener('change', validateForm);
   };
 
+  validateForm();
+  setAddressInInput(false);
+
   window.form = {
     adForm: adForm,
     toggleEnableForms: toggleEnableForms,
     validateForm: validateForm,
+    setAddressInInput: setAddressInInput,
   };
 })();

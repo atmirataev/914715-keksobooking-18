@@ -74,6 +74,9 @@
     });
   };
 
+  /**
+   * Закрывает попап карточки объявления
+   */
   var closeCardPopup = function () {
     var map = document.querySelector('.map');
     var adCard = document.querySelector('.map__card');

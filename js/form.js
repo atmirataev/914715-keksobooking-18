@@ -1,14 +1,7 @@
 'use strict';
 
 (function () {
-  var mapFilters = document.querySelector('.map__filters');
-  var mapFiltersFieldsets = mapFilters.querySelectorAll('fieldset');
-  var mapFiltersSelects = mapFilters.querySelectorAll('.select');
   var adForm = document.querySelector('.ad-form');
-  var adFormFieldsets = adForm.querySelectorAll('fieldset');
-  var capacitySelect = adForm.querySelector('#capacity');
-  var roomNumberSelect = adForm.querySelector('#room_number');
-  var houseType = adForm.querySelector('#type');
 
   /**
    * Переключает поле в активное/неактивное состояние
@@ -23,6 +16,11 @@
 
   // Переключает форму в активное/неактивное состояние
   var toggleEnableForms = function (mapIsActive) {
+    var mapFilters = document.querySelector('.map__filters');
+    var mapFiltersFieldsets = mapFilters.querySelectorAll('fieldset');
+    var mapFiltersSelects = mapFilters.querySelectorAll('.select');
+    var adFormFieldsets = adForm.querySelectorAll('fieldset');
+
     [adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
       toggleEnableFormElems(item, !mapIsActive);
     });
@@ -34,6 +32,9 @@
    * Проводит валидацию поля выбора количества гостей с учетом выбранной комнаты
    */
   var validateForm = function () {
+    var capacitySelect = adForm.querySelector('#capacity');
+    var roomNumberSelect = adForm.querySelector('#room_number');
+
     capacitySelect.querySelectorAll('option').forEach(function (item) {
       item.disabled = roomNumberSelect.value < item.value || item.value === '0';
       if (roomNumberSelect.value === '100') {
@@ -49,6 +50,10 @@
       }
     });
 
+    /**
+     * @param {String} type - Тип гостиницы
+     * @return {Number} - Минимальная сумма за номер
+     */
     var setMinPriceForCurrentType = function (type) {
       var minPriceForCurrentType = {
         FLAT: 1000,
@@ -60,6 +65,9 @@
       return minPriceForCurrentType[type];
     };
 
+    /**
+     * Синхронизирует время заезда и выезда
+     */
     (function () {
       var timeIn = adForm.querySelector('#timein');
       var timeOut = adForm.querySelector('#timeout');
@@ -76,21 +84,25 @@
       });
     })();
 
+    /**
+     * Выставляет минимальную сумму за ночь, в соответствии с типом выбранного номера
+     */
     var validatePriceInput = function () {
       var priceInput = adForm.querySelector('#price');
+      var houseType = adForm.querySelector('#type');
       var currentType = houseType.options[houseType.selectedIndex].value.toUpperCase();
       var minPriceForCurrentType = setMinPriceForCurrentType(currentType);
 
       priceInput.setAttribute('min', minPriceForCurrentType);
       priceInput.placeholder = minPriceForCurrentType;
+
+      houseType.addEventListener('blur', validatePriceInput);
     };
 
     validatePriceInput();
 
-    houseType.addEventListener('blur', validatePriceInput);
+    roomNumberSelect.addEventListener('change', validateForm);
   };
-
-  roomNumberSelect.addEventListener('change', validateForm);
 
   window.form = {
     adForm: adForm,

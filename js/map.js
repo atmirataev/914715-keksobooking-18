@@ -1,50 +1,54 @@
 'use strict';
 
 (function () {
-  var map = document.querySelector('.map');
   var mapIsActive = false;
 
-  var renderAdvertisement = function (ad) {
+  /**
+   * @param {Object} advertisement - Элемент массива объектов объявлений, полученных с сервера
+   * @return {HTMLElement} - Пин объявления
+   */
+  var renderAdvertisement = function (advertisement) {
     var adElem = document.querySelector('#pin').content.querySelector('.map__pin').cloneNode(true);
 
-    adElem.style.left = ad.location.x + 'px';
-    adElem.style.top = ad.location.y + 'px';
-    adElem.querySelector('img').src = ad.author.avatar;
-    adElem.querySelector('img').alt = ad.offer.title;
+    adElem.style.left = advertisement.location.x + 'px';
+    adElem.style.top = advertisement.location.y + 'px';
+    adElem.querySelector('img').src = advertisement.author.avatar;
+    adElem.querySelector('img').alt = advertisement.offer.title;
 
     return adElem;
   };
 
-  var succesGettingHandler = function (ads) {
+  /**
+   * При успешной загрузки данных с сервера, отображает пины на карте
+   * @param {Array} advertisements - Массив объектов, полученных с сервера
+   */
+  var succesGettingHandler = function (advertisements) {
     var mapPinsList = document.querySelector('.map__pins');
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < ads.length; i++) {
-      fragment.appendChild(renderAdvertisement(ads[i]));
-      window.card.putCardsInMap(ads[i]);
+    for (var i = 0; i < advertisements.length; i++) {
+      var advertisementPin = renderAdvertisement(advertisements[i]);
+      fragment.appendChild(advertisementPin);
+      window.pins.setAdverstismentData(advertisements[i], advertisementPin);
     }
+
     mapPinsList.appendChild(fragment);
-
-    /**
-     * Скрывает все объявления кроме одной. Временное решение. Чтобы карточки не нагромождались одна на другую
-     */
-    var hideCardsExcepThLast = function () {
-      var cards = document.querySelectorAll('.map__card');
-      cards.forEach(function (item) {
-        item.style.display = 'none';
-      });
-      var card = document.querySelector('.map__card');
-      card.style.display = 'block';
-    };
-
-    hideCardsExcepThLast();
+    window.card.openPopup();
   };
 
+  /**
+   * При неуспешной загрузки данных с сервера, выводит сообщение об ошибке
+   * @param {String} errorMessage - Текст сообщения
+   */
   var errorHandler = function (errorMessage) {
     var errorTemplate = document.querySelector('#error').content.cloneNode(true);
     var errorBlock = errorTemplate.querySelector('.error');
     var siteMain = document.querySelector('main');
     var errorMessageCloseBtn = errorBlock.querySelector('.error__button');
+
+    /**
+     * Закрывает окно с сообщением об ошибке
+     */
     var closeErrorPopup = function () {
       siteMain.removeChild(errorBlock);
     };
@@ -71,14 +75,15 @@
    * Активирует карту и формы
    */
   var openMap = function () {
+    var map = document.querySelector('.map');
+
     if (!mapIsActive) {
       window.backend.load(succesGettingHandler, errorHandler);
       map.classList.remove('map--faded');
-      window.form.adForm.classList.remove('ad-form--disabled');
       mapIsActive = true;
       window.form.toggleEnableForms(mapIsActive);
       window.form.validateForm();
-      window.mainPin.setAddressInInput(true);
+      window.form.setAddressInInput(mapIsActive);
     }
   };
 

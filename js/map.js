@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var mapIsActive = false;
+
   /**
    * @param {Object} advertisement - Элемент массива объектов объявлений, полученных с сервера
    * @return {HTMLElement} - Пин объявления
@@ -36,7 +38,7 @@
 
   /**
    * При неуспешной загрузки данных с сервера, выводит сообщение об ошибке
-   * @param {Text} errorMessage - Текст сообщения
+   * @param {String} errorMessage - Текст сообщения
    */
   var errorHandler = function (errorMessage) {
     var errorTemplate = document.querySelector('#error').content.cloneNode(true);
@@ -74,7 +76,6 @@
    */
   var openMap = function () {
     var map = document.querySelector('.map');
-    var mapIsActive = false;
 
     if (!mapIsActive) {
       window.backend.load(succesGettingHandler, errorHandler);

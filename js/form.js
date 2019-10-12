@@ -82,28 +82,18 @@
     /**
      * Синхронизирует время заезда и выезда
      */
-    (function () {
+    var syncTime = function () {
       var timeIn = adForm.querySelector('#timein');
       var timeOut = adForm.querySelector('#timeout');
 
-      timeIn.addEventListener('blur', function () {
-        var timeInValue = timeIn.options[timeIn.selectedIndex].value;
-        timeOut.querySelectorAll('option').forEach(function (item) {
-          if (timeInValue === item.value) {
-            item.selected = true;
-          }
-        });
+      timeIn.addEventListener('change', function () {
+        timeOut.value = timeIn.value;
       });
 
-      timeOut.addEventListener('blur', function () {
-        var timeOutValue = timeOut.options[timeOut.selectedIndex].value;
-        timeIn.querySelectorAll('option').forEach(function (item) {
-          if (timeOutValue === item.value) {
-            item.selected = true;
-          }
-        });
+      timeOut.addEventListener('change', function () {
+        timeIn.value = timeOut.value;
       });
-    })();
+    };
 
     /**
      * Выставляет минимальную сумму за ночь, в соответствии с типом выбранного номера
@@ -121,6 +111,7 @@
     };
 
     validatePriceInput();
+    syncTime();
 
     roomNumberSelect.addEventListener('change', validateForm);
   };

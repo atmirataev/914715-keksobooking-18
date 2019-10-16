@@ -3,6 +3,8 @@
 (function () {
   var mainMapPin = document.querySelector('.map__pin--main');
   var PIN_SIZE = 65;
+  var NEEDLE_HEIGHT = 22;
+
 
   var mapSize = {
     x: {
@@ -16,13 +18,11 @@
   };
 
   /**
-   * Добавляет адрес пина в поле "адрес" и делает это поля только для чтения
+   * Добавляет адрес пина в поле "адрес"
    * @param {Boolean} isActive - Активна карта или неактивна
    * @return {String} - Позиция главного пина
    */
-  var getAdrress = function (isActive) {
-    var NEEDLE_HEIGHT = 22;
-
+  var getAddress = function (isActive) {
     var mapPinPosition = Math.round(parseInt(mainMapPin.style.left, 10) + PIN_SIZE / 2) + ', ' + Math.round((parseInt(mainMapPin.style.top, 10) + PIN_SIZE / 2));
 
     if (isActive) {
@@ -75,15 +75,16 @@
         y: moveEvt.clientY,
       };
 
-      if (topPos >= mapSize.y.min - PIN_SIZE / 2 && topPos <= mapSize.y.max - PIN_SIZE / 2) {
+
+      if (topPos >= mapSize.y.min && topPos <= mapSize.y.max) {
         mainMapPin.style.top = topPos + 'px';
       }
 
-      if (leftPos >= mapSize.x.min - PIN_SIZE / 2 && leftPos <= mapSize.x.max - PIN_SIZE / 2) {
+      if (leftPos >= mapSize.x.min - Math.round(PIN_SIZE / 2) && leftPos <= mapSize.x.max - Math.round(PIN_SIZE / 2)) {
         mainMapPin.style.left = leftPos + 'px';
       }
 
-      window.form.setAddressInInput();
+      window.form.setAddressInInput(true);
     };
 
     var onMoseUp = function (upEvt) {
@@ -103,6 +104,6 @@
   window.pins = {
     setAdverstismentData: setAdverstismentData,
     parseAdvertisementData: parseAdvertisementData,
-    getAdrress: getAdrress,
+    getAddress: getAddress,
   };
 })();

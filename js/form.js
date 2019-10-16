@@ -20,7 +20,7 @@
    */
   var setAddressInInput = function (mapIsActive) {
     var addressInput = adForm.querySelector('input[name="address"]');
-    addressInput.value = window.pins.getAdrress(mapIsActive);
+    addressInput.value = window.pins.getAddress(mapIsActive);
   };
 
   // Переключает форму в активное/неактивное состояние

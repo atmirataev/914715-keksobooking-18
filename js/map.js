@@ -106,6 +106,7 @@
 
     document.addEventListener('keydown', function (evt) {
       window.util.isEscEvent(evt, closeSuccessPopup);
+      document.removeEventListener('click', closeSuccessPopup);
     }, {
       once: true
     });

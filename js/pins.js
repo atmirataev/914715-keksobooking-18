@@ -97,6 +97,30 @@
     document.addEventListener('mouseup', onMoseUp);
   });
 
+  var setMainPinInCenter = function () {
+    var MAIN_PIN_DEFAULT_POS = {
+      top: 375,
+      left: 570,
+    };
+
+    mainMapPin.style.top = MAIN_PIN_DEFAULT_POS.top + 'px';
+    mainMapPin.style.left = MAIN_PIN_DEFAULT_POS.left + 'px';
+    window.form.setAddressInInput(false);
+  };
+
+  var removePinsAndCard = function () {
+    var mapPinsList = document.querySelector('.map__pins');
+    var adCard = document.querySelector('.map__card');
+    var mapPins = mapPinsList.querySelectorAll('.map__pin:not(.map__pin--main');
+    mapPins.forEach(function (mapPin) {
+      mapPinsList.removeChild(mapPin);
+    });
+
+    if (adCard) {
+      window.map.mapBlock.removeChild(adCard);
+    }
+  };
+
   mainMapPin.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, window.map.open);
   });
@@ -105,5 +129,7 @@
     setAdverstismentData: setAdverstismentData,
     parseAdvertisementData: parseAdvertisementData,
     getAddress: getAddress,
+    setMainPinInCenter: setMainPinInCenter,
+    removePinsAndCard: removePinsAndCard,
   };
 })();

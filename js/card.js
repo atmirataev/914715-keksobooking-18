@@ -68,7 +68,9 @@
     mapFiltersContainer.insertAdjacentElement('beforeBegin', currentCard);
 
     cardCloseBtn.addEventListener('click', closeCardPopup);
-    document.addEventListener('keydown', onPopupEscPress);
+    document.addEventListener('keydown', onPopupEscPress, {
+      once: true
+    });
   };
 
   /**

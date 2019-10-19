@@ -116,13 +116,27 @@
     roomNumberSelect.addEventListener('change', validateForm);
   };
 
+  /**
+   * Переключает форму в активное/неактивное состояние
+   * @param {Boolen} isActive -  Состояние карты (активно/неактивно)
+   */
+  var toggleForm = function (isActive) {
+    toggleEnableForms(isActive);
+    validateForm();
+    setAddressInInput(isActive);
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(adForm), window.map.succesPostingHandler, window.map.errorHandler);
+  });
+
   validateForm();
   setAddressInInput(false);
 
   window.form = {
     adForm: adForm,
-    toggleEnableForms: toggleEnableForms,
-    validateForm: validateForm,
+    toggleForm: toggleForm,
     setAddressInInput: setAddressInInput,
   };
 })();

@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var map = document.querySelector('.map');
   var mapIsActive = false;
 
   /**
@@ -34,6 +35,17 @@
 
     mapPinsList.appendChild(fragment);
     window.card.openPopup();
+  };
+
+  var succesPostingHandler = function () {
+    window.pins.removePinsAndCard();
+    mapIsActive = false;
+    window.form.toggleForm(mapIsActive);
+    window.form.adForm.reset();
+    window.pins.setMainPinInCenter();
+    map.classList.add('map--faded');
+    window.form.adForm.classList.add('ad-form--disabled');
+    showSuccessMsg();
   };
 
   /**
@@ -72,22 +84,50 @@
   };
 
   /**
+   * Показывает сообщение об успешной отправке формы
+   */
+  var showSuccessMsg = function () {
+    var successTemplate = document.querySelector('#success').content.cloneNode(true);
+    var successBlock = successTemplate.querySelector('.success');
+    var siteMain = document.querySelector('main');
+
+    siteMain.appendChild(successBlock);
+
+    /**
+     * Закрывает окно с сообщением об успешной отправке формы
+     */
+    var closeSuccessPopup = function () {
+      siteMain.removeChild(successBlock);
+    };
+
+    document.addEventListener('click', closeSuccessPopup, {
+      once: true
+    });
+
+    document.addEventListener('keydown', function (evt) {
+      window.util.isEscEvent(evt, closeSuccessPopup);
+      document.removeEventListener('click', closeSuccessPopup);
+    }, {
+      once: true
+    });
+  };
+
+  /**
    * Активирует карту и формы
    */
   var openMap = function () {
-    var map = document.querySelector('.map');
-
     if (!mapIsActive) {
       window.backend.load(succesGettingHandler, errorHandler);
       map.classList.remove('map--faded');
       mapIsActive = true;
-      window.form.toggleEnableForms(mapIsActive);
-      window.form.validateForm();
-      window.form.setAddressInInput(mapIsActive);
+      window.form.toggleForm(mapIsActive);
     }
   };
 
   window.map = {
+    mapBlock: map,
     open: openMap,
+    succesPostingHandler: succesPostingHandler,
+    errorHandler: errorHandler,
   };
 })();

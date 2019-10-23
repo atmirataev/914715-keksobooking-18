@@ -3,6 +3,8 @@
 (function () {
   var map = document.querySelector('.map');
   var mapIsActive = false;
+  var ads = [];
+  var PINS_LIMIT = 5;
 
   /**
    * @param {Object} advertisement - Элемент массива объектов объявлений, полученных с сервера
@@ -19,13 +21,11 @@
     return adElem;
   };
 
-  /**
-   * При успешной загрузки данных с сервера, отображает пины на карте
-   * @param {Array} advertisements - Массив объектов, полученных с сервера
-   */
-  var succesGettingHandler = function (advertisements) {
+  var renderAdvertisements = function (advertisements) {
     var mapPinsList = document.querySelector('.map__pins');
     var fragment = document.createDocumentFragment();
+    // var MAX_COUNT_OF_ADVERTISEMENTS_ON_MAP = 5;
+    // var countsOfAdvertisements = advertisements.length <= MAX_COUNT_OF_ADVERTISEMENTS_ON_MAP ? advertisements.length : MAX_COUNT_OF_ADVERTISEMENTS_ON_MAP;
 
     for (var i = 0; i < advertisements.length; i++) {
       var advertisementPin = renderAdvertisement(advertisements[i]);
@@ -34,6 +34,16 @@
     }
 
     mapPinsList.appendChild(fragment);
+  };
+
+  /**
+   * При успешной загрузки данных с сервера, отображает пины на карте
+   * @param {Array} data - Массив объектов, полученных с сервера
+   */
+  var succesGettingHandler = function (data) {
+    window.map.ads = data;
+    var choosenAds = window.map.ads.slice(0, PINS_LIMIT);
+    renderAdvertisements(choosenAds);
     window.card.openPopup();
   };
 
@@ -125,9 +135,12 @@
   };
 
   window.map = {
+    ads: ads,
     mapBlock: map,
     open: openMap,
     succesPostingHandler: succesPostingHandler,
     errorHandler: errorHandler,
+    renderAdvertisements: renderAdvertisements,
+    PINS_LIMIT: PINS_LIMIT,
   };
 })();

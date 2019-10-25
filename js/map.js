@@ -24,8 +24,6 @@
   var renderAdvertisements = function (advertisements) {
     var mapPinsList = document.querySelector('.map__pins');
     var fragment = document.createDocumentFragment();
-    // var MAX_COUNT_OF_ADVERTISEMENTS_ON_MAP = 5;
-    // var countsOfAdvertisements = advertisements.length <= MAX_COUNT_OF_ADVERTISEMENTS_ON_MAP ? advertisements.length : MAX_COUNT_OF_ADVERTISEMENTS_ON_MAP;
 
     for (var i = 0; i < advertisements.length; i++) {
       var advertisementPin = renderAdvertisement(advertisements[i]);

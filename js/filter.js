@@ -1,23 +1,60 @@
 'use strict';
 
 (function () {
-  var housingTypeToggle = document.querySelector('#housing-type');
+  var filter = document.querySelector('.map__filters');
 
-  var filterForm = function () {
-    var filteredAds = window.map.ads.filter(function (item) {
-      return item.offer.type === housingTypeToggle.value;
+  var filterAds = function (ads) {
+    return ads.filter(function (item) {
+      var housingTypeToggle = filter.querySelector('#housing-type');
+
+      if (housingTypeToggle.value !== 'any') {
+        return item.offer.type === housingTypeToggle.value;
+      }
+
+      return window.map.ads;
+    }).filter(function (item) {
+      var priceToggle = filter.querySelector('#housing-price');
+
+      if (priceToggle.value === 'middle') {
+        return item.offer.price >= '10000' && item.offer.price < '50000';
+      } else if (priceToggle.value === 'low') {
+        return item.offer.price < '10000';
+      } else if (priceToggle.value === 'high') {
+        return item.offer.price >= '50000';
+      }
+
+      return window.map.ads;
+    }).filter(function (item) {
+      var housingRoomsToggle = filter.querySelector('#housing-rooms');
+
+      if (housingRoomsToggle.value !== 'any') {
+        return item.offer.rooms === +housingRoomsToggle.value;
+      }
+
+      return window.map.ads;
+    }).filter(function (item) {
+      var housingGuestsToggle = filter.querySelector('#housing-guests');
+
+      if (housingGuestsToggle.value !== 'any') {
+        return item.offer.guests === +housingGuestsToggle.value;
+      }
+
+      return window.map.ads;
+    }).filter(function (item) {
+      var housingFeaturesToggle = filter.querySelector('#housing-features');
+      var checkedFeatures = housingFeaturesToggle.querySelectorAll('input:checked');
+
+      return Array.from(checkedFeatures).every(function (element) {
+        return item.offer.features.includes(element.value);
+      });
     });
-
-    return filteredAds;
   };
 
-
-  var updateData = function () {
+  var updateData = window.debounce(function () {
     window.pins.removePinsAndCard();
-    var filteredForm = filterForm();
-    filteredForm.slice(0, window.map.PINS_LIMIT);
-    window.map.renderAdvertisements(filteredForm);
-  };
+    var filteredAds = filterAds(window.map.ads);
+    window.map.renderAdvertisements(filteredAds.slice(0, window.map.PINS_LIMIT));
+  });
 
-  housingTypeToggle.addEventListener('change', updateData);
+  filter.addEventListener('change', updateData);
 })();

@@ -107,7 +107,7 @@
       priceInput.setAttribute('min', minPriceForCurrentType);
       priceInput.placeholder = minPriceForCurrentType;
 
-      houseType.addEventListener('blur', validatePriceInput);
+      houseType.addEventListener('change', validatePriceInput);
     };
 
     validatePriceInput();
@@ -126,6 +126,26 @@
     setAddressInInput(isActive);
   };
 
+  var resetBtn = adForm.querySelector('.ad-form__reset');
+
+  var makeAdformInactive = function () {
+    window.pins.removePinsAndCard();
+    window.map.isActive = false;
+    window.form.toggleForm(window.map.isActive);
+    window.form.adForm.reset();
+    window.pins.setMainPinInCenter();
+    window.map.mapBlock.classList.add('map--faded');
+    window.form.adForm.classList.add('ad-form--disabled');
+    resetBtn.removeEventListener('click', makeAdformInactive);
+  };
+
+  resetBtn.addEventListener('click', makeAdformInactive);
+  resetBtn.addEventListener('keydown', function (evt) {
+    window.util.isEnterEvent(evt, makeAdformInactive);
+  }, {
+    once: true
+  });
+
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(adForm), window.map.succesPostingHandler, window.map.errorHandler);
@@ -138,5 +158,6 @@
     adForm: adForm,
     toggleForm: toggleForm,
     setAddressInInput: setAddressInInput,
+    makeAdformInactive: makeAdformInactive,
   };
 })();

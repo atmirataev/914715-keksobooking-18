@@ -46,13 +46,7 @@
   };
 
   var succesPostingHandler = function () {
-    window.pins.removePinsAndCard();
-    mapIsActive = false;
-    window.form.toggleForm(mapIsActive);
-    window.form.adForm.reset();
-    window.pins.setMainPinInCenter();
-    map.classList.add('map--faded');
-    window.form.adForm.classList.add('ad-form--disabled');
+    window.form.makeAdformInactive();
     showSuccessMsg();
   };
 
@@ -133,6 +127,7 @@
   };
 
   window.map = {
+    isActive: mapIsActive,
     ads: ads,
     mapBlock: map,
     open: openMap,

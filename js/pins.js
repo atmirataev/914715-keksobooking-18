@@ -126,6 +126,7 @@
   });
 
   window.pins = {
+    mainMapPin: mainMapPin,
     setAdverstismentData: setAdverstismentData,
     parseAdvertisementData: parseAdvertisementData,
     getAddress: getAddress,

@@ -53,10 +53,11 @@
     return JSON.parse(params);
   };
 
-  mainMapPin.addEventListener('keydown', function (evt) {
+  var onMainMapPinEnterClick = function (evt) {
     window.util.isEnterEvent(evt, window.map.open);
-  });
+  };
 
+  mainMapPin.addEventListener('keydown', onMainMapPinEnterClick);
   mainMapPin.addEventListener('mousedown', window.map.open);
   mainMapPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -133,5 +134,6 @@
     getAddress: getAddress,
     setMainPinInCenter: setMainPinInCenter,
     removePinsAndCard: removePinsAndCard,
+    onMainMapPinEnterClick: onMainMapPinEnterClick,
   };
 })();

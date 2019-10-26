@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var filter = document.querySelector('.map__filters');
   var OfferPrice = {
     LOW: {
       MAX: '10000',
@@ -13,14 +12,13 @@
     HIGH: {
       MIN: '50000',
     }
-
   };
+  var filter = document.querySelector('.map__filters');
   var housingTypeToggle = filter.querySelector('#housing-type');
   var priceToggle = filter.querySelector('#housing-price');
   var housingRoomsToggle = filter.querySelector('#housing-rooms');
   var housingGuestsToggle = filter.querySelector('#housing-guests');
   var housingFeaturesToggle = filter.querySelector('#housing-features');
-
 
   var filterAds = function (ads) {
     return ads.filter(function (item) {
@@ -29,7 +27,7 @@
         return item.offer.type === housingTypeToggle.value;
       }
 
-      return window.map.ads;
+      return item;
     }).filter(function (item) {
 
       if (priceToggle.value === 'middle') {
@@ -40,21 +38,21 @@
         return item.offer.price >= OfferPrice.HIGH.MIN;
       }
 
-      return window.map.ads;
+      return item;
     }).filter(function (item) {
 
       if (housingRoomsToggle.value !== 'any') {
         return item.offer.rooms === +housingRoomsToggle.value;
       }
 
-      return window.map.ads;
+      return item;
     }).filter(function (item) {
 
       if (housingGuestsToggle.value !== 'any') {
         return item.offer.guests === +housingGuestsToggle.value;
       }
 
-      return window.map.ads;
+      return item;
     }).filter(function (item) {
       var checkedFeatures = housingFeaturesToggle.querySelectorAll('input:checked');
 

@@ -128,6 +128,9 @@
     map.classList.add('map--faded');
     window.form.advertisement.classList.add('ad-form--disabled');
     window.form.resetBtn.removeEventListener('click', makeMapInactive);
+    window.pins.mainMapPin.addEventListener('keydown', window.pins.onMainMapPinEnterClick);
+    window.pins.mainMapPin.addEventListener('mousedown', window.map.open);
+
   };
 
   /**
@@ -137,6 +140,9 @@
     window.backend.load(succesGettingHandler, errorHandler);
     map.classList.remove('map--faded');
     window.form.toggle(true);
+    window.pins.mainMapPin.removeEventListener('mousedown', window.map.open);
+    window.pins.mainMapPin.removeEventListener('keydown', window.pins.onMainMapPinEnterClick);
+
   };
 
   window.map = {

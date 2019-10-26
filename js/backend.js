@@ -3,48 +3,51 @@
 (function () {
   var URL = 'https://js.dump.academy/keksobooking/data';
   var UPLOAD_URL = 'https://js.dump.academy/keksobooking';
+  var ERROR_MSG = 'Произошла ошибка соединения';
+  var OK_STATUS = 200;
 
   /**
-   *Функия, получающая данные с сервера
+   * Подготавливает запрос
    * @param {Function} onLoad - Callback, который срабатыает при успешном выполнении запроса
    * @param {Function} onError - Callback, который не срабатыает при успешном выполнении запроса
+   * @return {XMLHttpRequest} - Готовый запрос на сервер
    */
-  var load = function (onLoad, onError) {
+  var prepareRequest = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === OK_STATUS) {
         onLoad(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError(ERROR_MSG);
     });
+
+    return xhr;
+  };
+
+  /**
+   * Функия, получающая данные с сервера
+   * @param {Function} onLoad - Callback, который срабатыает при успешном выполнении запроса
+   * @param {Function} onError - Callback, который не срабатыает при успешном выполнении запроса
+   */
+  var load = function (onLoad, onError) {
+    var xhr = prepareRequest(onLoad, onError);
     xhr.open('GET', URL);
     xhr.send();
   };
 
   /**
-   *Функция, отправляющая данные на сервер
+   * Функция, отправляющая данные на сервер
    * @param {Object} data - Oбъект FormData, который содержит данные формы, которые будут отправлены на сервер
    * @param {Function} onLoad - Callback, который срабатыает при успешном выполнении запроса
    * @param {Function} onError - Callback, который не срабатыает при успешном выполнении запроса
    */
   var save = function (data, onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-    xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
-        onLoad(xhr.response);
-      } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
+    var xhr = prepareRequest(onLoad, onError);
     xhr.open('POST', UPLOAD_URL);
     xhr.send(data);
   };

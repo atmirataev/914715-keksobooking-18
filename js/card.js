@@ -1,28 +1,23 @@
 'use strict';
 
 (function () {
-  /**
-   * @param {String} type - Полученный с сервера тип гостиницы
-   * @return {String} - Русский перевод
-   */
-  var getPopupType = function (type) {
-    var HouseType = {
-      FLAT: 'Квартира',
-      BUNGALO: 'Бунгало',
-      HOUSE: 'Дом',
-      PALACE: 'Дворец',
-    };
-
-    return HouseType[type];
+  var HouseType = {
+    FLAT: 'Квартира',
+    BUNGALO: 'Бунгало',
+    HOUSE: 'Дом',
+    PALACE: 'Дворец',
   };
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var map = document.querySelector('.map');
+  var mapPins = document.querySelector('.map__pins');
 
   /**
    * @param {Object} advertisement - Объявление с данными
    * @return {HTMLElement} - Карточка объявления
    */
   var renderCard = function (advertisement) {
-    var cardTemplate = document.querySelector('#card').content.cloneNode(true);
-    var cardElem = cardTemplate.querySelector('.map__card');
+    var cardElem = cardTemplate.cloneNode(true);
     var popupTitle = cardElem.querySelector('.popup__title');
     var popupAddress = cardElem.querySelector('.popup__text--address');
     var popupPrice = cardElem.querySelector('.popup__text--price');
@@ -37,7 +32,8 @@
     popupTitle.textContent = advertisement.offer.title;
     popupAddress.textContent = advertisement.offer.address;
     popupPrice.textContent = advertisement.offer.price + '₽/ночь';
-    popupType.textContent = getPopupType(advertisement.offer.type.toUpperCase());
+    var offerType = advertisement.offer.type.toUpperCase();
+    popupType.textContent = HouseType[offerType];
     popupCapacity.textContent = advertisement.offer.rooms + ' комнаты, для ' + advertisement.offer.guests + ' гостей';
     popupTime.textContent = 'Заезд после ' + advertisement.offer.checkin + ' , выезд до ' + advertisement.offer.checkout;
     popupFeatures.textContent = advertisement.offer.features.join(', ');
@@ -61,7 +57,6 @@
    * @param {Object} advertisementData - Данные объявления
    */
   var putCardInMap = function (advertisementData) {
-    var mapFiltersContainer = document.querySelector('.map__filters-container');
     var currentCard = renderCard(advertisementData);
     var cardCloseBtn = currentCard.querySelector('.popup__close');
 
@@ -85,7 +80,6 @@
    * Закрывает попап карточки объявления
    */
   var closeCardPopup = function () {
-    var map = document.querySelector('.map');
     var adCard = document.querySelector('.map__card');
     var cardCloseBtn = document.querySelector('.popup__close');
 
@@ -98,8 +92,6 @@
    * При клике на пин открывает окно с карточкой объявления
    */
   var openCardPopup = function () {
-    var mapPins = document.querySelector('.map__pins');
-
     mapPins.addEventListener('click', function (evt) {
       var mapPin = evt.target.closest('.map__pin:not(.map__pin--main)');
       var isCardOnSite = document.querySelector('.map__card');
@@ -118,7 +110,6 @@
   };
 
   window.card = {
-    putCardInMap: putCardInMap,
     closePopup: closeCardPopup,
     openPopup: openCardPopup,
   };

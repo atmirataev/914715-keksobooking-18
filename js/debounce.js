@@ -3,6 +3,11 @@
 (function () {
   var DEBOUNCE_INTERVAL = 500;
 
+  /**
+   * Устраняет 'дребезг' в ходе работы с фильтром. Данные обновляется с задержкой DEBOUNCE_INTERVAL мс
+   * @param {Function} cb - Функция обратного вызова
+   * @return {Function} - Устанавливает время задержки данных, после обновления фильтра
+   */
   var debounce = function (cb) {
     var lastTimeout = null;
 

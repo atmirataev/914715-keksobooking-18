@@ -2,7 +2,7 @@
 
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
+  var DEFAULT_AVATAR = 'img/muffin-grey.svg';
   var avatarChooser = document.querySelector('.ad-form__field input[type=file]');
   var avatarPreview = document.querySelector('.ad-form-header__preview img');
   var roomPhotoChooser = document.querySelector('.ad-form__upload input[type=file]');
@@ -50,4 +50,14 @@
       reader.readAsDataURL(file);
     }
   });
+
+  /**
+   * Сбрасывает значения полей загрузки картинок
+   */
+  var resetImg = function () {
+    avatarPreview.src = DEFAULT_AVATAR;
+    roomPhotoBlock.innerHTML = '';
+  };
+
+  window.images.reset = resetImg;
 })();

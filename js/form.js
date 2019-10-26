@@ -2,34 +2,45 @@
 
 (function () {
   var adForm = document.querySelector('.ad-form');
+  var NOT_FOR_GUESTS = '0';
+  var A_LOT_OF_ROOMS = '100';
+  var addressInput = adForm.querySelector('input[name="address"]');
+  var mapFilters = document.querySelector('.map__filters');
+  var mapFiltersFieldsets = mapFilters.querySelectorAll('fieldset');
+  var mapFiltersSelects = mapFilters.querySelectorAll('.select');
+  var adFormFieldsets = adForm.querySelectorAll('fieldset');
+  var capacitySelect = adForm.querySelector('#capacity');
+  var roomNumberSelect = adForm.querySelector('#room_number');
+  var timeIn = adForm.querySelector('#timein');
+  var timeOut = adForm.querySelector('#timeout');
+  var priceInput = adForm.querySelector('#price');
+  var houseType = adForm.querySelector('#type');
+  var resetBtn = adForm.querySelector('.ad-form__reset');
 
   /**
    * Переключает поле в активное/неактивное состояние
    * @param {Arry} elems - Массив, содержащий интерактивные поля (input, select, fieldset)
-   * @param {Boolean} mapIsActive - Необходимый вид карты (активный/неактивный)
+   * @param {Boolean} isActive - Необходимое состояние (активное/неактивное)
    */
-  var toggleEnableFormElems = function (elems, mapIsActive) {
+  var toggleEnableFormElems = function (elems, isActive) {
     for (var i = 0; i < elems.length; i++) {
-      elems[i].disabled = mapIsActive;
+      elems[i].disabled = isActive;
     }
   };
 
   /**
    * Добавляет адрес пина в поле "адрес" и делает это поля только для чтения
-   * @param {Boolean} mapIsActive - Активна карта или нет
+   * @param {Boolean} isActive - Необходимое состояние (активное/неактивное)
    */
-  var setAddressInInput = function (mapIsActive) {
-    var addressInput = adForm.querySelector('input[name="address"]');
-    addressInput.value = window.pins.getAddress(mapIsActive);
+  var setAddressInInput = function (isActive) {
+    addressInput.value = window.pins.getAddress(isActive);
   };
 
-  // Переключает форму в активное/неактивное состояние
+  /**
+   * Переключает форму в активное/неактивное состояние
+   * @param {Boolen} mapIsActive - Активное/неактивное состяние карты
+   */
   var toggleEnableForms = function (mapIsActive) {
-    var mapFilters = document.querySelector('.map__filters');
-    var mapFiltersFieldsets = mapFilters.querySelectorAll('fieldset');
-    var mapFiltersSelects = mapFilters.querySelectorAll('.select');
-    var adFormFieldsets = adForm.querySelectorAll('fieldset');
-
     if (mapIsActive) {
       adForm.classList.remove('ad-form--disabled');
     }
@@ -37,22 +48,16 @@
     [adFormFieldsets, mapFiltersFieldsets, mapFiltersSelects].forEach(function (item) {
       toggleEnableFormElems(item, !mapIsActive);
     });
-
   };
-
-  toggleEnableForms();
 
   /**
    * Проводит валидацию поля выбора количества гостей с учетом выбранной комнаты
    */
   var validateForm = function () {
-    var capacitySelect = adForm.querySelector('#capacity');
-    var roomNumberSelect = adForm.querySelector('#room_number');
-
     capacitySelect.querySelectorAll('option').forEach(function (item) {
-      item.disabled = roomNumberSelect.value < item.value || item.value === '0';
-      if (roomNumberSelect.value === '100') {
-        item.disabled = item.value > 0;
+      item.disabled = roomNumberSelect.value < item.value || item.value === NOT_FOR_GUESTS;
+      if (roomNumberSelect.value === A_LOT_OF_ROOMS) {
+        item.disabled = item.value > NOT_FOR_GUESTS;
       }
 
       if (!item.disabled) {
@@ -83,9 +88,6 @@
      * Синхронизирует время заезда и выезда
      */
     var syncTime = function () {
-      var timeIn = adForm.querySelector('#timein');
-      var timeOut = adForm.querySelector('#timeout');
-
       timeIn.addEventListener('change', function () {
         timeOut.value = timeIn.value;
       });
@@ -99,8 +101,6 @@
      * Выставляет минимальную сумму за ночь, в соответствии с типом выбранного номера
      */
     var validatePriceInput = function () {
-      var priceInput = adForm.querySelector('#price');
-      var houseType = adForm.querySelector('#type');
       var currentType = houseType.options[houseType.selectedIndex].value.toUpperCase();
       var minPriceForCurrentType = setMinPriceForCurrentType(currentType);
 
@@ -124,40 +124,30 @@
     toggleEnableForms(isActive);
     validateForm();
     setAddressInInput(isActive);
+
+    resetBtn.addEventListener('click', window.map.makeInactive);
+    resetBtn.addEventListener('keydown', function (evt) {
+      window.util.isEnterEvent(evt, window.map.makeInactive);
+    }, {
+      once: true
+    });
+    adForm.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+      window.backend.save(new FormData(adForm), window.map.succesPostingHandler, window.map.errorHandler);
+    });
   };
 
-  var resetBtn = adForm.querySelector('.ad-form__reset');
-
-  var makeAdformInactive = function () {
-    window.pins.removePinsAndCard();
-    window.map.isActive = false;
-    window.form.toggleForm(window.map.isActive);
-    window.form.adForm.reset();
-    window.pins.setMainPinInCenter();
-    window.map.mapBlock.classList.add('map--faded');
-    window.form.adForm.classList.add('ad-form--disabled');
-    resetBtn.removeEventListener('click', makeAdformInactive);
-  };
-
-  resetBtn.addEventListener('click', makeAdformInactive);
-  resetBtn.addEventListener('keydown', function (evt) {
-    window.util.isEnterEvent(evt, makeAdformInactive);
-  }, {
-    once: true
-  });
+  toggleForm(false);
 
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(adForm), window.map.succesPostingHandler, window.map.errorHandler);
   });
 
-  validateForm();
-  setAddressInInput(false);
-
   window.form = {
-    adForm: adForm,
-    toggleForm: toggleForm,
+    advertisement: adForm,
+    toggle: toggleForm,
     setAddressInInput: setAddressInInput,
-    makeAdformInactive: makeAdformInactive,
+    resetBtn: resetBtn,
   };
 })();

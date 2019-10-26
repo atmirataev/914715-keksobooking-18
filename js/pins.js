@@ -1,11 +1,15 @@
 'use strict';
 
 (function () {
-  var mainMapPin = document.querySelector('.map__pin--main');
   var PIN_SIZE = 65;
   var NEEDLE_HEIGHT = 22;
-
-
+  var MAIN_PIN_DEFAULT_POS = {
+    top: 375,
+    left: 570,
+  };
+  var mainMapPin = document.querySelector('.map__pin--main');
+  var mapPinsList = document.querySelector('.map__pins');
+  var adCard = document.querySelector('.map__card');
   var mapSize = {
     x: {
       min: 0,
@@ -23,13 +27,11 @@
    * @return {String} - Позиция главного пина
    */
   var getAddress = function (isActive) {
-    var mapPinPosition = Math.round(parseInt(mainMapPin.style.left, 10) + PIN_SIZE / 2) + ', ' + Math.round((parseInt(mainMapPin.style.top, 10) + PIN_SIZE / 2));
+    var pinXPos = Math.round(parseInt(mainMapPin.style.left, 10) + PIN_SIZE / 2);
+    var pinYPos = parseInt(mainMapPin.style.top, 10);
+    var heightDivider = isActive ? PIN_SIZE + NEEDLE_HEIGHT : PIN_SIZE / 2;
 
-    if (isActive) {
-      mapPinPosition = Math.round(parseInt(mainMapPin.style.left, 10) + PIN_SIZE / 2) + ', ' + Math.round((parseInt(mainMapPin.style.top, 10) + PIN_SIZE + NEEDLE_HEIGHT));
-    }
-
-    return mapPinPosition;
+    return pinXPos + ', ' + Math.round(pinYPos + heightDivider);
   };
 
   /**
@@ -50,6 +52,10 @@
     var params = advertisementPin.getAttribute('data-params');
     return JSON.parse(params);
   };
+
+  mainMapPin.addEventListener('keydown', function (evt) {
+    window.util.isEnterEvent(evt, window.map.open);
+  });
 
   mainMapPin.addEventListener('mousedown', window.map.open);
   mainMapPin.addEventListener('mousedown', function (evt) {
@@ -76,7 +82,7 @@
       };
 
 
-      if (topPos >= mapSize.y.min && topPos <= mapSize.y.max) {
+      if (topPos >= mapSize.y.min - PIN_SIZE - NEEDLE_HEIGHT && topPos <= mapSize.y.max - PIN_SIZE - NEEDLE_HEIGHT) {
         mainMapPin.style.top = topPos + 'px';
       }
 
@@ -97,33 +103,28 @@
     document.addEventListener('mouseup', onMoseUp);
   });
 
+  /**
+   * Перемещает позицию главной метки на положение по умолчаниб
+   */
   var setMainPinInCenter = function () {
-    var MAIN_PIN_DEFAULT_POS = {
-      top: 375,
-      left: 570,
-    };
-
     mainMapPin.style.top = MAIN_PIN_DEFAULT_POS.top + 'px';
     mainMapPin.style.left = MAIN_PIN_DEFAULT_POS.left + 'px';
     window.form.setAddressInInput(false);
   };
 
+  /**
+   * Удаляет с карты метки и карточку объявления
+   */
   var removePinsAndCard = function () {
-    var mapPinsList = document.querySelector('.map__pins');
-    var adCard = document.querySelector('.map__card');
     var mapPins = mapPinsList.querySelectorAll('.map__pin:not(.map__pin--main');
     mapPins.forEach(function (mapPin) {
       mapPinsList.removeChild(mapPin);
     });
 
     if (adCard) {
-      window.map.mapBlock.removeChild(adCard);
+      window.map.block.removeChild(adCard);
     }
   };
-
-  mainMapPin.addEventListener('keydown', function (evt) {
-    window.util.isEnterEvent(evt, window.map.open);
-  });
 
   window.pins = {
     mainMapPin: mainMapPin,

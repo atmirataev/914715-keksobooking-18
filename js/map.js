@@ -1,18 +1,20 @@
 'use strict';
 
 (function () {
-  var map = document.querySelector('.map');
-  var mapIsActive = false;
-  var ads = [];
   var PINS_LIMIT = 5;
+  var map = document.querySelector('.map');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
+  var siteMain = document.querySelector('main');
+  var ads = [];
+  var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
   /**
    * @param {Object} advertisement - Элемент массива объектов объявлений, полученных с сервера
-   * @return {HTMLElement} - Пин объявления
+   * @return {HTMLElement} - Метка объявления
    */
   var renderAdvertisement = function (advertisement) {
-    var adElem = document.querySelector('#pin').content.querySelector('.map__pin').cloneNode(true);
-
+    var adElem = adTemplate.cloneNode(true);
     adElem.style.left = advertisement.location.x + 'px';
     adElem.style.top = advertisement.location.y + 'px';
     adElem.querySelector('img').src = advertisement.author.avatar;
@@ -21,6 +23,11 @@
     return adElem;
   };
 
+
+  /**
+   * Показывает на карте необходимое количество меток объявлений
+   * @param {Array} advertisements - Массив данных с объявлениями
+   */
   var renderAdvertisements = function (advertisements) {
     var mapPinsList = document.querySelector('.map__pins');
     var fragment = document.createDocumentFragment();
@@ -45,53 +52,11 @@
     window.card.openPopup();
   };
 
-  var succesPostingHandler = function () {
-    window.form.makeAdformInactive();
-    showSuccessMsg();
-  };
-
-  /**
-   * При неуспешной загрузки данных с сервера, выводит сообщение об ошибке
-   * @param {String} errorMessage - Текст сообщения
-   */
-  var errorHandler = function (errorMessage) {
-    var errorTemplate = document.querySelector('#error').content.cloneNode(true);
-    var errorBlock = errorTemplate.querySelector('.error');
-    var siteMain = document.querySelector('main');
-    var errorMessageCloseBtn = errorBlock.querySelector('.error__button');
-
-    /**
-     * Закрывает окно с сообщением об ошибке
-     */
-    var closeErrorPopup = function () {
-      siteMain.removeChild(errorBlock);
-    };
-
-    errorBlock.querySelector('.error__message').textContent = errorMessage;
-    siteMain.appendChild(errorBlock);
-
-    errorMessageCloseBtn.addEventListener('click', closeErrorPopup, {
-      once: true
-    });
-
-    document.addEventListener('click', closeErrorPopup, {
-      once: true
-    });
-
-    document.addEventListener('keydown', function (evt) {
-      window.util.isEscEvent(evt, closeErrorPopup);
-    }, {
-      once: true
-    });
-  };
-
   /**
    * Показывает сообщение об успешной отправке формы
    */
   var showSuccessMsg = function () {
-    var successTemplate = document.querySelector('#success').content.cloneNode(true);
-    var successBlock = successTemplate.querySelector('.success');
-    var siteMain = document.querySelector('main');
+    var successBlock = successTemplate.cloneNode(true);
 
     siteMain.appendChild(successBlock);
 
@@ -115,25 +80,73 @@
   };
 
   /**
+   * После успешной отправки данных, переводит карту в неактивное состояние и показывает сообщение об успешной отравке данных
+   */
+  var succesPostingHandler = function () {
+    window.form.makeMapInactive();
+    showSuccessMsg();
+  };
+
+  /**
+   * При неуспешной загрузки данных с сервера, выводит сообщение об ошибке
+   * @param {String} errorMessage - Текст сообщения
+   */
+  var errorHandler = function (errorMessage) {
+    var errorBlock = errorTemplate.cloneNode(true);
+
+    errorBlock.querySelector('.error__message').textContent = errorMessage;
+    siteMain.appendChild(errorBlock);
+
+    /**
+     * Закрывает окно с сообщением об ошибке
+     */
+    var closeErrorPopup = function () {
+      siteMain.removeChild(errorBlock);
+      makeMapInactive();
+    };
+
+    document.addEventListener('click', closeErrorPopup, {
+      once: true
+    });
+
+    document.addEventListener('keydown', function (evt) {
+      window.util.isEscEvent(evt, closeErrorPopup);
+    }, {
+      once: true
+    });
+  };
+
+  /**
+   * Переводит карту в неактивное состояние
+   */
+  var makeMapInactive = function () {
+    window.pins.removePinsAndCard();
+    window.form.toggle(false);
+    window.form.advertisement.reset();
+    window.images.reset();
+    window.pins.setMainPinInCenter();
+    map.classList.add('map--faded');
+    window.form.advertisement.classList.add('ad-form--disabled');
+    window.form.resetBtn.removeEventListener('click', makeMapInactive);
+  };
+
+  /**
    * Активирует карту и формы
    */
   var openMap = function () {
-    if (!mapIsActive) {
-      window.backend.load(succesGettingHandler, errorHandler);
-      map.classList.remove('map--faded');
-      mapIsActive = true;
-      window.form.toggleForm(mapIsActive);
-    }
+    window.backend.load(succesGettingHandler, errorHandler);
+    map.classList.remove('map--faded');
+    window.form.toggle(true);
   };
 
   window.map = {
-    isActive: mapIsActive,
     ads: ads,
-    mapBlock: map,
+    block: map,
     open: openMap,
     succesPostingHandler: succesPostingHandler,
     errorHandler: errorHandler,
     renderAdvertisements: renderAdvertisements,
     PINS_LIMIT: PINS_LIMIT,
+    makeInactive: makeMapInactive,
   };
 })();

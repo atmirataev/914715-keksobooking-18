@@ -4,11 +4,11 @@
   var filter = document.querySelector('.map__filters');
   var OfferPrice = {
     LOW: {
-      MAX: '9999',
+      MAX: '10000',
     },
     MIDDLE: {
       MIN: '10000',
-      MAX: '49999',
+      MAX: '50000',
     },
     HIGH: {
       MIN: '50000',

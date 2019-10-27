@@ -9,7 +9,6 @@
   };
   var mainMapPin = document.querySelector('.map__pin--main');
   var mapPinsList = document.querySelector('.map__pins');
-  var adCard = document.querySelector('.map__card');
   var mapSize = {
     x: {
       min: 0,
@@ -118,6 +117,8 @@
    */
   var removePinsAndCard = function () {
     var mapPins = mapPinsList.querySelectorAll('.map__pin:not(.map__pin--main');
+    var adCard = document.querySelector('.map__card');
+
     mapPins.forEach(function (mapPin) {
       mapPinsList.removeChild(mapPin);
     });

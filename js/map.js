@@ -83,7 +83,7 @@
    * После успешной отправки данных, переводит карту в неактивное состояние и показывает сообщение об успешной отравке данных
    */
   var succesPostingHandler = function () {
-    window.form.makeMapInactive();
+    makeMapInactive();
     showSuccessMsg();
   };
 
